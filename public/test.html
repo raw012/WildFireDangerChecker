@@ -18,6 +18,43 @@
       overflow: hidden;
     }
 
+    /* ── Mode selection overlay ── */
+    #mode-select {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: #0d1117;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      padding: 40px 24px;
+      text-align: center;
+    }
+    #mode-select h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    #mode-select h2 span { color: #f78166; }
+    #mode-select p { font-size: .88rem; color: #8b949e; margin-bottom: 12px; }
+    .mode-btn {
+      width: 100%;
+      max-width: 320px;
+      padding: 18px 24px;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: opacity .15s, transform .1s;
+    }
+    .mode-btn:active { transform: scale(0.97); }
+    #mode-camera { background: #f78166; color: #fff; }
+    #mode-upload { background: #21262d; color: #e6edf3; border-color: #30363d; }
+    .mode-btn:hover { opacity: .88; }
+
     /* ── Landscape prompt ── */
     #landscape-prompt {
       display: none;
@@ -54,7 +91,7 @@
       gap: 12px;
     }
     #topbar-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-    #topbar h1 { font-size: .92rem; font-weight: 600; letter-spacing: .03em; white-space: nowrap; }
+    #topbar h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: .03em; white-space: nowrap; }
     #topbar h1 span { color: #f78166; }
 
     /* Tabs */
@@ -70,7 +107,7 @@
     .tab-btn {
       padding: 4px 10px;
       border-radius: 5px;
-      font-size: .7rem;
+      font-size: .82rem;
       font-weight: 600;
       cursor: pointer;
       border: none;
@@ -95,9 +132,9 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    #ffwi-score { font-size: 1.4rem; font-weight: 700; }
-    #ffwi-label { font-size: 0.62rem; color: #8b949e; text-transform: uppercase; letter-spacing: .08em; }
-    #risk-level { font-size: 0.82rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
+    #ffwi-score { font-size: 1.7rem; font-weight: 700; }
+    #ffwi-label { font-size: 0.72rem; color: #8b949e; text-transform: uppercase; letter-spacing: .08em; }
+    #risk-level { font-size: 0.9rem; font-weight: 700; padding: 2px 9px; border-radius: 20px; }
     .risk-Low      { background:#1a4731; color:#56d364; }
     .risk-Moderate { background:#3d2e00; color:#e3b341; }
     .risk-High     { background:#3d1300; color:#f78166; }
@@ -105,7 +142,7 @@
 
     /* Right controls */
     #controls-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    #status-wrap { display:flex; align-items:center; gap:6px; font-size:.78rem; color:#8b949e; }
+    #status-wrap { display:flex; align-items:center; gap:6px; font-size:.85rem; color:#8b949e; }
     #status-dot {
       width:9px; height:9px; border-radius:50%; flex-shrink:0;
       background:#238636; box-shadow:0 0 6px #238636;
@@ -119,7 +156,7 @@
       gap: 5px;
       padding: 5px 12px;
       border-radius: 6px;
-      font-size: .75rem;
+      font-size: .82rem;
       font-weight: 600;
       cursor: pointer;
       background: #2d1300;
@@ -139,10 +176,10 @@
       border-radius: 6px;
       padding: 4px 10px;
     }
-    #interval-wrap .interval-label { font-size: .65rem; color: #8b949e; }
+    #interval-wrap .interval-label { font-size: .72rem; color: #8b949e; }
     #interval-wrap .interval-row { display: flex; align-items: center; gap: 6px; }
     #interval-slider { width: 80px; cursor: pointer; accent-color: #f78166; }
-    #interval-wrap .interval-val { font-size:.75rem; color:#e6edf3; min-width:22px; }
+    #interval-wrap .interval-val { font-size:.82rem; color:#e6edf3; min-width:22px; }
 
     /* ── Stop modal ── */
     #stop-modal {
@@ -414,7 +451,7 @@
       padding: 10px 14px;
       background: #0d1117;
       border-top: 1px solid #30363d;
-      font-size: .78rem;
+      font-size: .85rem;
       color: #8b949e;
       flex-shrink: 0;
     }
@@ -434,6 +471,14 @@
     }
     #json-drawer summary { cursor:pointer; color:#58a6ff; margin-bottom:4px; }
 
+    /* ── Mobile: hide tabs and interval slider ── */
+    @media (max-width: 767px) {
+      #tab-wrap      { display: none; }
+      #interval-wrap { display: none; }
+      #status-wrap   { display: none; }
+      #ffwi-badge    { min-width: unset; padding: 5px 10px; }
+    }
+
     /* ── Error toast ── */
     #error-toast {
       display:none;
@@ -444,6 +489,14 @@
   </style>
 </head>
 <body>
+
+<!-- Mode selection overlay -->
+<div id="mode-select">
+  <h2>🔥 Wildfire <span>Hazard Detector</span></h2>
+  <p>Choose how you'd like to scan for hazards</p>
+  <button class="mode-btn" id="mode-camera">📹 Start Live Scan</button>
+  <button class="mode-btn" id="mode-upload">📁 Upload Video</button>
+</div>
 
 <!-- Landscape prompt -->
 <div id="landscape-prompt">
@@ -1043,16 +1096,28 @@
     }
   }
 
-  // ── Boot ──
-  (async () => {
-    const ok = await startCamera();
-    if (ok) {
-      video.addEventListener('loadeddata', () => {
-        statusText.textContent = `Active — every ${slider.value}s`;
-        scanFrame();
-      }, { once: true });
-    }
-  })();
+  // ── Mode selection ──
+  function hideModeSelect() {
+    document.getElementById('mode-select').style.display = 'none';
+  }
+
+  document.getElementById('mode-camera').addEventListener('click', () => {
+    hideModeSelect();
+    // switchTab calls startCamera internally; wire loadeddata before switching
+    video.addEventListener('loadeddata', () => {
+      statusText.textContent = `Active — every ${slider.value}s`;
+      scanFrame();
+    }, { once: true });
+    switchTab('camera');
+  });
+
+  document.getElementById('mode-upload').addEventListener('click', () => {
+    hideModeSelect();
+    switchTab('upload');
+  });
+
+  // ── Boot ── (mode selection shown; user picks mode before anything starts)
+  // No auto-start; camera/upload begin only after mode is selected.
 </script>
 </body>
 </html>
