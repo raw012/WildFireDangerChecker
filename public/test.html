@@ -94,31 +94,6 @@
     #topbar h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: .03em; white-space: nowrap; }
     #topbar h1 span { color: #f78166; }
 
-    /* Tabs */
-    #tab-wrap {
-      display: flex;
-      gap: 2px;
-      background: #21262d;
-      border: 1px solid #30363d;
-      border-radius: 7px;
-      padding: 3px;
-      flex-shrink: 0;
-    }
-    .tab-btn {
-      padding: 4px 10px;
-      border-radius: 5px;
-      font-size: .82rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      color: #8b949e;
-      transition: all .15s;
-      white-space: nowrap;
-    }
-    .tab-btn.active { background: #f78166; color: white; }
-    .tab-btn:disabled { cursor: not-allowed; opacity: 0.45; }
-
     /* FFWI badge */
     #ffwi-badge {
       display: flex;
@@ -473,7 +448,6 @@
 
     /* ── Mobile: hide tabs and interval slider ── */
     @media (max-width: 767px) {
-      #tab-wrap      { display: none; }
       #interval-wrap { display: none; }
       #status-wrap   { display: none; }
       #ffwi-badge    { min-width: unset; padding: 5px 10px; }
@@ -519,10 +493,6 @@
 <div id="topbar">
   <div id="topbar-left">
     <h1>🔥 Wildfire <span>Hazard Detector</span></h1>
-    <div id="tab-wrap">
-      <button class="tab-btn active" id="tab-camera">📹 Live Camera</button>
-      <button class="tab-btn" id="tab-upload">📁 Upload Video</button>
-    </div>
   </div>
 
   <div id="ffwi-badge">
@@ -670,16 +640,11 @@
   checkOrientation();
 
   // ── Tab switching ──
-  function setTabsDisabled(d) {
-    document.getElementById('tab-camera').disabled = d;
-    document.getElementById('tab-upload').disabled = d;
-  }
+  function setTabsDisabled(_d) {}
 
   function switchTab(tab) {
     if (isAnalyzing) return;
     currentTab = tab;
-    document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
-    document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
 
     const cameraControls = ['interval-wrap', 'stop-btn', 'status-wrap'];
     cameraControls.forEach(id => {
@@ -704,9 +669,6 @@
       statusText.textContent = 'Upload mode';
     }
   }
-
-  document.getElementById('tab-camera').addEventListener('click', () => switchTab('camera'));
-  document.getElementById('tab-upload').addEventListener('click', () => switchTab('upload'));
 
   // ── Interval slider ──
   slider.addEventListener('input', () => {
